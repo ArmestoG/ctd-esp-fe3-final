@@ -5,6 +5,7 @@ import axios from 'axios';
 const initialState = {
   theme: 'light',
   dentists: [],
+  favorites: [], // Estado para almacenar los favoritos
 };
 
 // Reducer para manejar las acciones del contexto global
@@ -20,10 +21,34 @@ const reducer = (state, action) => {
         ...state,
         dentists: action.payload,
       };
-    default:
+      case 'ADD_FAVORITE':
+      const newFavDentist = action.payload;
+      const existingFav = state.favorites.find(fav => fav.id === newFavDentist.id);
+      if (!existingFav) {
+        const newState = {
+          ...state,
+          favorites: [...state.favorites, newFavDentist],
+        };
+        // Guardar en localStorage usando el ID como clave
+        localStorage.setItem(newFavDentist.id, JSON.stringify(newFavDentist));
+        return newState;
+      }
       return state;
-  }
+      case 'LOAD_FAVORITES_FROM_LOCAL_STORAGE':
+        // Acción para cargar favoritos desde localStorage al estado global
+        const storedFavorites = JSON.parse(localStorage.getItem('favorites'));
+        if (storedFavorites) {
+          return {
+            ...state,
+            favorites: storedFavorites,
+          };
+        }
+        return state;
+      default:
+        return state;
+    }
 };
+
 
 // Crear el contexto global
 export const GlobalContext = createContext();
@@ -58,12 +83,13 @@ export const GlobalProvider = ({ children }) => {
 
   return (
     <GlobalContext.Provider
-      value={{
-        state,
-        toggleTheme,
-      }}
-    >
-      {children}
-    </GlobalContext.Provider>
+    value={{
+      state,
+      toggleTheme,
+      dispatch,
+    }}
+  >
+    {children}
+  </GlobalContext.Provider>
   );
 };

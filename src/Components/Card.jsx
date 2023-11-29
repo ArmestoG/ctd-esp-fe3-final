@@ -5,26 +5,23 @@ import { GlobalContext } from '../Contexts/GlobalContext';
 
 const Card = ({ name, username, id }) => {
   
-  const { state } = useContext(GlobalContext);
+  const { state, dispatch } = useContext(GlobalContext);
+
 
   const addFav = () => {
     const favDentist = { name, username, id };
-    const favKey = `${id}`;
-  
-    const existingFav = localStorage.getItem(favKey);
-  
+
+    const existingFav = state.favorites.find(fav => fav.id === id);
+
     if (!existingFav) {
-      // Si no existe, guardar el favorito en localStorage
-      localStorage.setItem(favKey, JSON.stringify(favDentist)); // Usar la clave única para almacenar el dentista
-            console.log(`Se agregó al Dr/a ${name} a favoritos`);
-            alert(`Se agregó al Dr/a ${name} a favoritos`);
+      dispatch({ type: 'ADD_FAVORITE', payload: favDentist });
+      alert(`Se agregó al Dr/a ${name} a favoritos`);
     } else {
-      // Si ya existe, mostrar un mensaje
       alert(`${name} Ya está en favoritos`);
     }
   };
  
-  
+
   return (
     <div className="card">
         {/* En cada card deberan mostrar en name - username y el id */}
@@ -33,9 +30,13 @@ const Card = ({ name, username, id }) => {
         <p>{username}</p>               
     </div>
         {/* No debes olvidar que la Card a su vez servira como Link hacia la pagina de detalle */}
-        <Link to={`/dentist/${id}`} className="detailLink">Ver detalle</Link>
+        <Link to={`/dentist/${id}`} className="detailLink">
+          Ver detalle
+        </Link>
         {/* Ademas deberan integrar la logica para guardar cada Card en el localStorage */}
-        <button onClick={addFav} className="favButton">Add fav</button>
+        <button onClick={addFav} className="favButton">
+          Add fav
+        </button>
     </div>
   );
 };
