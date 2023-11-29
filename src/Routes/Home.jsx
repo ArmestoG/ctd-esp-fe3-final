@@ -1,30 +1,15 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import Card from '../Components/Card';
-import axios from 'axios';
-
-//Este componente debera ser estilado como "dark" o "light" dependiendo del theme del Context
+import { GlobalContext } from '../Contexts/GlobalContext'; 
 
 const Home = () => {
-
-  const [dentists, setDentists] = useState([]);
-
-  useEffect(() => {
-    // Llamada a la API usando Axios
-    axios.get('https://jsonplaceholder.typicode.com/users')
-      .then(response => {
-        setDentists(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-  }, []);
+  const { state } = useContext(GlobalContext);
 
   return (
-    <main className="" >
+    <main className={state.theme}>
       <h1>Home</h1>
       <div className='card-grid'>
-        {/* Renderizar las cards */}
-        {dentists.map(dentist => (
+        {state.dentists.map(dentist => (
           <Card
             key={dentist.id}
             name={dentist.name}
@@ -34,7 +19,7 @@ const Home = () => {
         ))}
       </div>
     </main>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

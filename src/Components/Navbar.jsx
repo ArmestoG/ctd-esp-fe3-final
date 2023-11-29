@@ -1,18 +1,18 @@
-import React from 'react'; 
-import { Link } from 'react-router-dom' ;
-
-//Este componente debera ser estilado como "dark" o "light" dependiendo del theme del Context
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { GlobalContext } from '../Contexts/GlobalContext'; 
 
 const Navbar = () => {
+  const { state, toggleTheme } = useContext(GlobalContext);
 
   return (
-    <nav>
-      <Link to='/' >Home</Link>
+    <nav className={state.theme}>
+      <Link to='/'>Home</Link>
       <Link to='/favs'>Favs</Link>
-      <Link to='/contact' >Contacto</Link>
-      <button >Change theme</button>
+      <Link to='/contact'>Contacto</Link>
+      <button onClick={toggleTheme}>Change theme</button>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

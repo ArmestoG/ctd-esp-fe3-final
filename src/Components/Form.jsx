@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { GlobalContext } from '../Contexts/GlobalContext';
 
 const Form = () => {
+  const { state } = useContext(GlobalContext);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -30,7 +32,7 @@ const Form = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={state.theme}>
         <div>
           <label htmlFor="fullName">Nombre completo:</label>
           <input

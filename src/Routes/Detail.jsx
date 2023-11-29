@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-
-
-//Este componente debera ser estilado como "dark" o "light" dependiendo del theme del Context
-
+import { GlobalContext } from '../Contexts/GlobalContext';
 
 const Detail = () => {
   const { id } = useParams(); // Obtiene el id de la URL
+  const { state } = useContext(GlobalContext);
   const [dentist, setDentist] = useState(null);
 
-
-    // Consumiendo el parametro dinamico de la URL deberan hacer un fetch a un user en especifico
   useEffect(() => {
     const fetchDentist = async () => {
       try {
@@ -30,10 +26,8 @@ const Detail = () => {
   }, [id]); // Se ejecuta cuando cambia el id
 
   return (
-    <>
-      {/* aqui deberan renderizar la informacion en detalle de un user en especifico */}
+    <main className={state.theme}>
       <h1>Detail Dentist ID: {id}</h1>
-      {/* Deberan mostrar el name - email - phone - website por cada user en especifico */}
       {dentist && (
         <div>
           <p>Name: {dentist.name}</p>
@@ -42,7 +36,7 @@ const Detail = () => {
           <p>Website: {dentist.website}</p>
         </div>
       )}
-    </>
+    </main>
   );
 };
 
