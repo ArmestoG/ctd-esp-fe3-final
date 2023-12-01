@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { GlobalContext } from "../Contexts/GlobalContext";
-import { BsToggleOn, BsToggleOff } from "react-icons/bs";
 
 const Navbar = () => {
   const { state, toggleTheme } = useContext(GlobalContext);
@@ -14,7 +13,7 @@ const Navbar = () => {
         <Link to="/favs">Destacados</Link>
         <Link to="/contact">Contacto</Link>
         <div className="theme-toggle" onClick={toggleTheme}>
-          {state.theme === "light" ? <BsToggleOff /> : <BsToggleOn />}
+          {state.theme === "light" ? "☀️" : "🌙"}
         </div>
       </div>
     </nav>

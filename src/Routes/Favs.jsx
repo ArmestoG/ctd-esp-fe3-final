@@ -44,7 +44,7 @@ const Favs = () => {
         ))}
       </div>
       <div className="remove-all-favs">
-        <button onClick={removeAllFavs}>🗑️</button>
+        <button onClick={removeAllFavs}>🗑️ Borrar Destacados</button>
       </div>
     </>
   );
