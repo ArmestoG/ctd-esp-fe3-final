@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from "react";
 import Card from "../Components/Card";
-import { GlobalContext } from '../Contexts/GlobalContext';
+import { GlobalContext } from "../Contexts/GlobalContext";
 
 const Favs = () => {
-  const { state } = useContext(GlobalContext);
+  const { state, dispatch } = useContext(GlobalContext);
   const [favDentists, setFavDentists] = useState([]);
 
   useEffect(() => {
@@ -17,11 +17,24 @@ const Favs = () => {
     setFavDentists(favsArray);
   }, []);
 
+  const removeAllFavs = () => {
+    localStorage.clear(); // Elimina todos los datos del localStorage
+    dispatch({ type: "REMOVE_ALL_FAVORITES" });
+  };
+
+  useEffect(() => {
+    const updatedFavDentists = state.favorites.map((fav) => ({
+      ...fav,
+      isFavorite: true,
+    }));
+    setFavDentists(updatedFavDentists);
+  }, [state.favorites]);
+
   return (
-      <main className={state.theme}>
-      <h1>Dentists Favs</h1>
+    <>
+      <h1>Destacados</h1>
       <div className="card-grid">
-        {favDentists.map(dentist => (
+        {favDentists.map((dentist) => (
           <Card
             key={dentist.id}
             name={dentist.name}
@@ -30,8 +43,10 @@ const Favs = () => {
           />
         ))}
       </div>
-      </main>
-    
+      <div className="remove-all-favs">
+        <button onClick={removeAllFavs}>🗑️</button>
+      </div>
+    </>
   );
 };
 

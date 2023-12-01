@@ -1,9 +1,9 @@
-import React, { createContext, useReducer, useEffect } from 'react';
-import axios from 'axios';
+import React, { createContext, useReducer, useEffect } from "react";
+import axios from "axios";
 
 // Definir el estado inicial del contexto global
 const initialState = {
-  theme: 'light',
+  theme: "light",
   dentists: [],
   favorites: [], // Estado para almacenar los favoritos
 };
@@ -11,44 +11,60 @@ const initialState = {
 // Reducer para manejar las acciones del contexto global
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'TOGGLE_THEME':
+    case "TOGGLE_THEME":
       return {
         ...state,
-        theme: state.theme === 'light' ? 'dark' : 'light',
+        theme: state.theme === "light" ? "dark" : "light",
       };
-    case 'SET_DENTISTS':
+    case "SET_DENTISTS":
       return {
         ...state,
         dentists: action.payload,
       };
-      case 'ADD_FAVORITE':
+    case "ADD_FAVORITE":
       const newFavDentist = action.payload;
-      const existingFav = state.favorites.find(fav => fav.id === newFavDentist.id);
+      const existingFav = state.favorites.find(
+        (fav) => fav.id === newFavDentist.id
+      );
+
       if (!existingFav) {
-        const newState = {
-          ...state,
-          favorites: [...state.favorites, newFavDentist],
-        };
-        // Guardar en localStorage usando el ID como clave
+        const updatedFavList = [...state.favorites, newFavDentist];
         localStorage.setItem(newFavDentist.id, JSON.stringify(newFavDentist));
-        return newState;
+        return {
+          ...state,
+          favorites: updatedFavList,
+        };
       }
       return state;
-      case 'LOAD_FAVORITES_FROM_LOCAL_STORAGE':
-        // Acción para cargar favoritos desde localStorage al estado global
-        const storedFavorites = JSON.parse(localStorage.getItem('favorites'));
-        if (storedFavorites) {
-          return {
-            ...state,
-            favorites: storedFavorites,
-          };
-        }
-        return state;
-      default:
-        return state;
-    }
+    case "REMOVE_FAVORITE":
+      const updatedFavList = state.favorites.filter(
+        (fav) => fav.id !== action.payload
+      );
+      localStorage.removeItem(action.payload);
+      return {
+        ...state,
+        favorites: updatedFavList,
+      };
+    case "LOAD_FAVORITES_FROM_LOCAL_STORAGE":
+      // Acción para cargar favoritos desde localStorage al estado global
+      const storedFavorites = JSON.parse(localStorage.getItem("favorites"));
+      if (storedFavorites) {
+        return {
+          ...state,
+          favorites: storedFavorites,
+        };
+      }
+      return state;
+    case "REMOVE_ALL_FAVORITES":
+      localStorage.clear(); // Elimina todos los datos del localStorage
+      return {
+        ...state,
+        favorites: [], // Vacía la lista de favoritos en el estado
+      };
+    default:
+      return state;
+  }
 };
-
 
 // Crear el contexto global
 export const GlobalContext = createContext();
@@ -59,17 +75,19 @@ export const GlobalProvider = ({ children }) => {
 
   // Acción para cambiar el tema
   const toggleTheme = () => {
-    dispatch({ type: 'TOGGLE_THEME' });
+    dispatch({ type: "TOGGLE_THEME" });
   };
 
   // Acción para obtener los dentistas de la API
   const fetchDentists = async () => {
     try {
-      const response = await axios.get('https://jsonplaceholder.typicode.com/users');
+      const response = await axios.get(
+        "https://jsonplaceholder.typicode.com/users"
+      );
       if (response.status === 200) {
-        dispatch({ type: 'SET_DENTISTS', payload: response.data });
+        dispatch({ type: "SET_DENTISTS", payload: response.data });
       } else {
-        throw new Error('Failed to fetch dentists');
+        throw new Error("Failed to fetch dentists");
       }
     } catch (error) {
       console.error(error);
@@ -83,13 +101,13 @@ export const GlobalProvider = ({ children }) => {
 
   return (
     <GlobalContext.Provider
-    value={{
-      state,
-      toggleTheme,
-      dispatch,
-    }}
-  >
-    {children}
-  </GlobalContext.Provider>
+      value={{
+        state,
+        toggleTheme,
+        dispatch,
+      }}
+    >
+      {children}
+    </GlobalContext.Provider>
   );
 };
